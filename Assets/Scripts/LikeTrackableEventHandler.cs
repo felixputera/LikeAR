@@ -9,7 +9,7 @@ using Vuforia;
 public class LikeTrackableEventHandler : DefaultTrackableEventHandler
 {
 	public GameObject canvas;
-	GameObject likeButton, likeButtonGolden, friend1, friend2, rest;
+	GameObject likeButton, likeButtonGolden, friend1, friend2, rest, likedBy, page1;
 	GameObject notLikedButton, notLikedButtonGolden;
 	Coroutine httpCoroutine1, httpCoroutine2, httpCoroutine3;
 	GameObject eventSystem;
@@ -26,6 +26,7 @@ public class LikeTrackableEventHandler : DefaultTrackableEventHandler
 		public string title;
 		public string description;
 		public int like_count;
+		public string picture;
 		public string like_count_humanize;
 	}
 	[System.Serializable]
@@ -66,7 +67,9 @@ public class LikeTrackableEventHandler : DefaultTrackableEventHandler
 		eventSystem = GameObject.FindGameObjectWithTag("EventSystem");
 		friend1 = GameObject.FindGameObjectWithTag("Friend1");
 		friend2 = GameObject.FindGameObjectWithTag("Friend2");
+		page1 = GameObject.FindGameObjectWithTag("Page1");
 		rest = GameObject.FindGameObjectWithTag("Rest");
+		likedBy = GameObject.FindGameObjectWithTag("LikedBy");
 
 		base.Start();
 		m_VuMarkManager = TrackerManager.Instance.GetStateManager().GetVuMarkManager();
@@ -113,12 +116,6 @@ public class LikeTrackableEventHandler : DefaultTrackableEventHandler
 		if (httpCoroutine2 != null) StopCoroutine(httpCoroutine2);
 		gameObject.SetActive(true);
 		eventSystem.SetActive(true);
-		Debug.Log("debug");
-		Debug.Log(gameObject);
-		Debug.Log(eventSystem);
-		Debug.Log(httpCoroutine2);
-		Debug.Log(currentTargetId);
-		Debug.Log("enddebug");
 		httpCoroutine2 = StartCoroutine(FetchFromBackend("POST", HOST + "/api/stickers/" + currentTargetId + "/like/", rerender));
 	}
 
@@ -155,17 +152,13 @@ public class LikeTrackableEventHandler : DefaultTrackableEventHandler
 		GameObject descriptionObject = GameObject.FindGameObjectWithTag("Description");
 		descriptionObject.GetComponent<UnityEngine.UI.Text>().text = resp.data.target.description;
 
-		Debug.Log(friend1);
-		Debug.Log(friend2);
-		Debug.Log(resp.data.liked_by.sample_friends);
-		Debug.Log(resp.data.liked_by.sample_friends[0].profile_picture);
-		Debug.Log(resp.data.liked_by.sample_friends[1].profile_picture);
-		friend1.GetComponent<LoadImage>().SetImage(resp.data.liked_by.sample_friends[0].profile_picture);
-		friend2.GetComponent<LoadImage>().SetImage(resp.data.liked_by.sample_friends[1].profile_picture);
+		//StartCoroutine(friend1.GetComponent<LoadImage>().SetImage(resp.data.liked_by.sample_friends[0].profile_picture));
+		//StartCoroutine(friend2.GetComponent<LoadImage>().SetImage(resp.data.liked_by.sample_friends[1].profile_picture));
 		rest.GetComponent<Text>().text = resp.data.liked_by.rest_likes_count.ToString();
+		GameObject likedByObject = GameObject.FindGameObjectWithTag("LikedBy");
+		likedByObject.GetComponent<UnityEngine.UI.Text>().text = resp.data.target.like_count_humanize + " likes this.";
+		StartCoroutine(page1.GetComponent<LoadImage>().SetImage(resp.data.target.picture));
 
-		Debug.Log(resp.data.is_liked);
-		Debug.Log(resp.data.type);
 		if (resp.data.is_liked == true)
 		{
 			if (resp.data.type == 1) { // meaning type is golden

@@ -7,6 +7,7 @@ public class LoadImage : MonoBehaviour
     // Use this for initialization
     public IEnumerator SetImage(string imageUrl)
     {
+		Debug.Log(imageUrl);
         // Start a download of the given URL
         using (WWW www = new WWW(imageUrl))
         {
