@@ -8,8 +8,14 @@ TagManager:
   - Description
   - NotLikedButton
   - LikeButton
-  - Pipe
-  - FlappyBird
+  - NotLikedButtonGolden
+  - LikeButtonGolden
+  - EventSystem
+  - Friend1
+  - Friend2
+  - Rest
+  - LikedBy
+  - Page1
   layers:
   - Default
   - TransparentFX
