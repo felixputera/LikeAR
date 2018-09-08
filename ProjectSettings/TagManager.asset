@@ -8,6 +8,9 @@ TagManager:
   - Description
   - NotLikedButton
   - LikeButton
+  - NotLikedButtonGolden
+  - LikeButtonGolden
+  - EventSystem
   layers:
   - Default
   - TransparentFX

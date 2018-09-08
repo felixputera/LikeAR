@@ -5,17 +5,20 @@ using UnityEngine.UI;
 using UnityEngine.Networking;
 using Vuforia;
 
+
 public class LikeTrackableEventHandler : DefaultTrackableEventHandler
 {
 	public GameObject canvas;
-	GameObject likeButton;
-	GameObject notLikedButton;
+	GameObject likeButton, likeButtonGolden;
+	GameObject notLikedButton, notLikedButtonGolden;
 	Coroutine httpCoroutine1, httpCoroutine2, httpCoroutine3;
+	GameObject eventSystem;
+	string HOST = "http://localhost:8000";
 
 	VuMarkManager m_VuMarkManager;
 	VuMarkTarget m_ClosestVuMark;
 	VuMarkTarget m_CurrentVuMark;
-	VuMarkTarget currentTarget;
+	static int currentTargetId;
 
 	[System.Serializable]
 	public class Target
@@ -42,6 +45,7 @@ public class LikeTrackableEventHandler : DefaultTrackableEventHandler
 	{
 		public Target target;
 		public bool is_liked;
+		public int type;
 		public LikedBy liked_by;
 	}
 	[System.Serializable]
@@ -56,6 +60,10 @@ public class LikeTrackableEventHandler : DefaultTrackableEventHandler
 	{
 		likeButton = GameObject.FindGameObjectWithTag("LikeButton");
 		notLikedButton = GameObject.FindGameObjectWithTag("NotLikedButton");
+		likeButtonGolden = GameObject.FindGameObjectWithTag("LikeButtonGolden");
+		notLikedButtonGolden = GameObject.FindGameObjectWithTag("NotLikedButtonGolden");
+		eventSystem = GameObject.FindGameObjectWithTag("EventSystem");
+
 		base.Start();
 		m_VuMarkManager = TrackerManager.Instance.GetStateManager().GetVuMarkManager();
 		m_VuMarkManager.RegisterVuMarkDetectedCallback(OnVuMarkDetected);
@@ -70,11 +78,18 @@ public class LikeTrackableEventHandler : DefaultTrackableEventHandler
 	/// </summary>
 	public void OnVuMarkDetected(VuMarkTarget target)
 	{
+		likeButton.SetActive(false);
+		notLikedButton.SetActive(false);
+		likeButtonGolden.SetActive(false);
+		notLikedButtonGolden.SetActive(false);
+
 		Debug.Log("New VuMark: " + target.InstanceId.NumericValue);
-		currentTarget = target;
+		currentTargetId = (int)target.InstanceId.NumericValue;
+		Debug.Log("new current targetid: " + currentTargetId);
 		if (httpCoroutine1 != null) StopCoroutine(httpCoroutine1);
 		gameObject.SetActive(true);
-		httpCoroutine1 = StartCoroutine(FetchFromBackend("GET", "http://localhost:8000/api/stickers/" + (int)target.InstanceId.NumericValue, rerender));
+		eventSystem.SetActive(true);
+		httpCoroutine1 = StartCoroutine(FetchFromBackend("GET", HOST + "/api/stickers/" + currentTargetId + "/", rerender));
 	}
 
 	/// <summary>
@@ -83,20 +98,32 @@ public class LikeTrackableEventHandler : DefaultTrackableEventHandler
 	public void OnVuMarkLost(VuMarkTarget target)
 	{
 		Debug.Log("Lost VuMark: " + GetVuMarkId(target));
+		likeButton.SetActive(false);
+		notLikedButton.SetActive(false);
+		likeButtonGolden.SetActive(false);
+		notLikedButtonGolden.SetActive(false);
 	}
 
 	public void OnLike()
 	{
 		if (httpCoroutine2 != null) StopCoroutine(httpCoroutine2);
 		gameObject.SetActive(true);
-		httpCoroutine2 = StartCoroutine(FetchFromBackend("POST", "http://localhost:8000/api/stickers/" + (int)currentTarget.InstanceId.NumericValue + "/like/", rerender));
+		eventSystem.SetActive(true);
+		Debug.Log("debug");
+		Debug.Log(gameObject);
+		Debug.Log(eventSystem);
+		Debug.Log(httpCoroutine2);
+		Debug.Log(currentTargetId);
+		Debug.Log("enddebug");
+		httpCoroutine2 = StartCoroutine(FetchFromBackend("POST", HOST + "/api/stickers/" + currentTargetId + "/like/", rerender));
 	}
 
 	public void OnUnlike()
 	{
 		if (httpCoroutine3 != null) StopCoroutine(httpCoroutine3);
 		gameObject.SetActive(true);
-		httpCoroutine3 = StartCoroutine(FetchFromBackend("POST", "http://localhost:8000/api/stickers/" + (int)currentTarget.InstanceId.NumericValue + "/dislike/", rerender));
+		eventSystem.SetActive(true);
+		httpCoroutine3 = StartCoroutine(FetchFromBackend("POST", HOST + "/api/stickers/" + currentTargetId + "/dislike/", rerender));
 	}
 
 	#endregion // PUBLIC_METHODS
@@ -124,15 +151,35 @@ public class LikeTrackableEventHandler : DefaultTrackableEventHandler
 		GameObject descriptionObject = GameObject.FindGameObjectWithTag("Description");
 		descriptionObject.GetComponent<UnityEngine.UI.Text>().text = resp.data.target.description;
 
+		Debug.Log(resp.data.is_liked);
+		Debug.Log(resp.data.type);
 		if (resp.data.is_liked == true)
 		{
-			likeButton.SetActive(false);
-			notLikedButton.SetActive(true);
+			if (resp.data.type == 1) { // meaning type is golden
+				likeButton.SetActive(false);
+				notLikedButton.SetActive(false);
+				likeButtonGolden.SetActive(true);
+				notLikedButtonGolden.SetActive(false);
+			} else {
+				likeButton.SetActive(true);
+				notLikedButton.SetActive(false);
+				likeButtonGolden.SetActive(false);
+				notLikedButtonGolden.SetActive(false);
+			}
 		}
 		else
 		{
-			likeButton.SetActive(true);
-			notLikedButton.SetActive(false);
+			if (resp.data.type == 1) {
+				likeButton.SetActive(false);
+				notLikedButton.SetActive(false);
+				likeButtonGolden.SetActive(false);
+				notLikedButtonGolden.SetActive(true);
+			} else {
+				likeButton.SetActive(false);
+				notLikedButton.SetActive(true);
+				likeButtonGolden.SetActive(false);
+				notLikedButtonGolden.SetActive(false);
+			}
 		}
 		Canvas.ForceUpdateCanvases();
 	}
@@ -156,6 +203,7 @@ public class LikeTrackableEventHandler : DefaultTrackableEventHandler
 		}
 		else
 		{
+			Debug.Log(url);
 			callback(www.downloadHandler.text);
 		}
 	}
