@@ -11,6 +11,9 @@ TagManager:
   - NotLikedButtonGolden
   - LikeButtonGolden
   - EventSystem
+  - Friend1
+  - Friend2
+  - Rest
   layers:
   - Default
   - TransparentFX

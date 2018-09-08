@@ -13,7 +13,7 @@ public class LikeTrackableEventHandler : DefaultTrackableEventHandler
 	GameObject notLikedButton, notLikedButtonGolden;
 	Coroutine httpCoroutine1, httpCoroutine2, httpCoroutine3;
 	GameObject eventSystem;
-	string HOST = "http://localhost:8000";
+	string HOST = "https://likeplus.ntusu.org";
 
 	VuMarkManager m_VuMarkManager;
 	VuMarkTarget m_ClosestVuMark;
@@ -205,6 +205,7 @@ public class LikeTrackableEventHandler : DefaultTrackableEventHandler
 		} else {
 			www = UnityWebRequest.Post(url, "{}");
 		}
+		www.SetRequestHeader("AUTHORIZATION", "JWT " + FacebookInit.GetToken());
 
 		yield return www.SendWebRequest();
 

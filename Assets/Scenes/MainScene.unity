@@ -1146,9 +1146,10 @@ GameObject:
   - component: {fileID: 589775487}
   - component: {fileID: 589775486}
   - component: {fileID: 589775485}
+  - component: {fileID: 589775488}
   m_Layer: 0
   m_Name: Friend1
-  m_TagString: Untagged
+  m_TagString: Friend1
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1218,6 +1219,17 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 589775483}
   m_CullTransparentMesh: 0
+--- !u!114 &589775488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 589775483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9e3cad7ee91545118f483d393c4c771, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &624243104 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 224026693821312362, guid: 73894fe4105ac4f0483e2892fda50e23,
@@ -1900,9 +1912,10 @@ GameObject:
   - component: {fileID: 1594042215}
   - component: {fileID: 1594042214}
   - component: {fileID: 1594042213}
+  - component: {fileID: 1594042216}
   m_Layer: 0
   m_Name: Friend2
-  m_TagString: Untagged
+  m_TagString: Friend2
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1972,6 +1985,17 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1594042211}
   m_CullTransparentMesh: 0
+--- !u!114 &1594042216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1594042211}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9e3cad7ee91545118f483d393c4c771, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1664688587
 Prefab:
   m_ObjectHideFlags: 0
@@ -2186,7 +2210,7 @@ GameObject:
   - component: {fileID: 1672949666}
   m_Layer: 0
   m_Name: Number
-  m_TagString: Untagged
+  m_TagString: Rest
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
