@@ -32,6 +32,7 @@ public class LikeTrackableEventHandler : DefaultTrackableEventHandler {
     public void OnVuMarkDetected(VuMarkTarget target)
     {
         Debug.Log("New VuMark: " + target.InstanceId.NumericValue);
+        StartCoroutine(FetchFromBackend((int) target.InstanceId.NumericValue));
     }
 
     /// <summary>
@@ -59,7 +60,7 @@ public class LikeTrackableEventHandler : DefaultTrackableEventHandler {
         return string.Empty;
     }
 
-    private IEnumerator FetchFromBackend(string id) {
+    private IEnumerator FetchFromBackend(int id) {
         UnityWebRequest www = UnityWebRequest.Get("http://www.example.com/" + id);
         yield return www.SendWebRequest();
 
