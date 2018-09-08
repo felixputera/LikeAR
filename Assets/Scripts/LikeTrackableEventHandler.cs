@@ -9,7 +9,7 @@ using Vuforia;
 public class LikeTrackableEventHandler : DefaultTrackableEventHandler
 {
 	public GameObject canvas;
-	GameObject likeButton, likeButtonGolden;
+	GameObject likeButton, likeButtonGolden, friend1, friend2, rest;
 	GameObject notLikedButton, notLikedButtonGolden;
 	Coroutine httpCoroutine1, httpCoroutine2, httpCoroutine3;
 	GameObject eventSystem;
@@ -32,12 +32,13 @@ public class LikeTrackableEventHandler : DefaultTrackableEventHandler
 	public class Friend
 	{
 		public int id;
+		public string profile_picture;
 		public string name;
 	}
 	[System.Serializable]
 	public class LikedBy
 	{
-		public Friend[] friends;
+		public Friend[] sample_friends;
 		public int rest_likes_count;
 	}
 	[System.Serializable]
@@ -63,6 +64,9 @@ public class LikeTrackableEventHandler : DefaultTrackableEventHandler
 		likeButtonGolden = GameObject.FindGameObjectWithTag("LikeButtonGolden");
 		notLikedButtonGolden = GameObject.FindGameObjectWithTag("NotLikedButtonGolden");
 		eventSystem = GameObject.FindGameObjectWithTag("EventSystem");
+		friend1 = GameObject.FindGameObjectWithTag("Friend1");
+		friend2 = GameObject.FindGameObjectWithTag("Friend2");
+		rest = GameObject.FindGameObjectWithTag("Rest");
 
 		base.Start();
 		m_VuMarkManager = TrackerManager.Instance.GetStateManager().GetVuMarkManager();
@@ -150,6 +154,15 @@ public class LikeTrackableEventHandler : DefaultTrackableEventHandler
 
 		GameObject descriptionObject = GameObject.FindGameObjectWithTag("Description");
 		descriptionObject.GetComponent<UnityEngine.UI.Text>().text = resp.data.target.description;
+
+		Debug.Log(friend1);
+		Debug.Log(friend2);
+		Debug.Log(resp.data.liked_by.sample_friends);
+		Debug.Log(resp.data.liked_by.sample_friends[0].profile_picture);
+		Debug.Log(resp.data.liked_by.sample_friends[1].profile_picture);
+		friend1.GetComponent<LoadImage>().SetImage(resp.data.liked_by.sample_friends[0].profile_picture);
+		friend2.GetComponent<LoadImage>().SetImage(resp.data.liked_by.sample_friends[1].profile_picture);
+		rest.GetComponent<Text>().text = resp.data.liked_by.rest_likes_count.ToString();
 
 		Debug.Log(resp.data.is_liked);
 		Debug.Log(resp.data.type);

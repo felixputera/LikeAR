@@ -5,7 +5,7 @@ using UnityEngine;
 public class LoadImage : MonoBehaviour
 {
     // Use this for initialization
-    IEnumerator SetImage(string imageUrl)
+    public IEnumerator SetImage(string imageUrl)
     {
         // Start a download of the given URL
         using (WWW www = new WWW(imageUrl))
