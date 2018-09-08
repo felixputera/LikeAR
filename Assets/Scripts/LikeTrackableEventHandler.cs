@@ -8,6 +8,8 @@ using Vuforia;
 public class LikeTrackableEventHandler : DefaultTrackableEventHandler
 {
 	public GameObject canvas;
+	public GameObject likeButton;
+	public GameObject notLikedButton;
 	Coroutine httpCoroutine;
 
 	VuMarkManager m_VuMarkManager;
@@ -113,9 +115,6 @@ public class LikeTrackableEventHandler : DefaultTrackableEventHandler
 
 			// Show results as text
 			StickerSummaryResponse resp = JsonUtility.FromJson<StickerSummaryResponse>(www.downloadHandler.text);
-			Debug.Log(resp.data);
-			Debug.Log(www.downloadHandler.text);
-			Debug.Log(resp.data.target.title);
 
 			GameObject titleObject = GameObject.FindGameObjectWithTag("Title");
 			titleObject.GetComponent<UnityEngine.UI.Text>().text = resp.data.target.title;
@@ -124,13 +123,9 @@ public class LikeTrackableEventHandler : DefaultTrackableEventHandler
 			descriptionObject.GetComponent<UnityEngine.UI.Text>().text = resp.data.target.description;
 
 			if (resp.data.is_liked) {
-				GameObject likeButton = GameObject.FindGameObjectWithTag("LikeButton");
-				GameObject notLikedButton = GameObject.FindGameObjectWithTag("NotLikedButton");
 				likeButton.SetActive(true);
 				notLikedButton.SetActive(false);
 			} else {
-				GameObject likeButton = GameObject.FindGameObjectWithTag("LikeButton");
-				GameObject notLikedButton = GameObject.FindGameObjectWithTag("NotLikedButton");
 				likeButton.SetActive(false);
 				notLikedButton.SetActive(true);
 			}
