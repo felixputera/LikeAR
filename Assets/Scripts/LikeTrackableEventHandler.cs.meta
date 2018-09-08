@@ -5,8 +5,7 @@ MonoImporter:
   serializedVersion: 2
   defaultReferences:
   - canvas: {instanceID: 0}
-  - likeButton: {fileID: 1846088735680830, guid: fcbdaa41a4e084d4daccb381f061df14,
-      type: 2}
+  - likeButton: {instanceID: 0}
   - notLikedButton: {fileID: 1130149068187070, guid: a1790557499f04eeeb898f9d5809f46c,
       type: 2}
   executionOrder: 0

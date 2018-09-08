@@ -8,13 +8,14 @@ using Vuforia;
 public class LikeTrackableEventHandler : DefaultTrackableEventHandler
 {
 	public GameObject canvas;
-	public GameObject likeButton;
-	public GameObject notLikedButton;
-	Coroutine httpCoroutine;
+	GameObject likeButton;
+	GameObject notLikedButton;
+	Coroutine httpCoroutine1, httpCoroutine2, httpCoroutine3;
 
 	VuMarkManager m_VuMarkManager;
 	VuMarkTarget m_ClosestVuMark;
 	VuMarkTarget m_CurrentVuMark;
+	VuMarkTarget currentTarget;
 
 	[System.Serializable]
 	public class Target
@@ -53,11 +54,12 @@ public class LikeTrackableEventHandler : DefaultTrackableEventHandler
 	// Use this for initialization
 	protected override void Start()
 	{
+		likeButton = GameObject.FindGameObjectWithTag("LikeButton");
+		notLikedButton = GameObject.FindGameObjectWithTag("NotLikedButton");
 		base.Start();
 		m_VuMarkManager = TrackerManager.Instance.GetStateManager().GetVuMarkManager();
 		m_VuMarkManager.RegisterVuMarkDetectedCallback(OnVuMarkDetected);
 		m_VuMarkManager.RegisterVuMarkLostCallback(OnVuMarkLost);
-		Debug.Log("Start OMEGALUL");
 
 	}
 
@@ -69,9 +71,10 @@ public class LikeTrackableEventHandler : DefaultTrackableEventHandler
 	public void OnVuMarkDetected(VuMarkTarget target)
 	{
 		Debug.Log("New VuMark: " + target.InstanceId.NumericValue);
-		if (httpCoroutine != null) StopCoroutine(httpCoroutine);
+		currentTarget = target;
+		if (httpCoroutine1 != null) StopCoroutine(httpCoroutine1);
 		gameObject.SetActive(true);
-		httpCoroutine = StartCoroutine("FetchFromBackend", (int)target.InstanceId.NumericValue);
+		httpCoroutine1 = StartCoroutine(FetchFromBackend("GET", "http://localhost:8000/api/stickers/" + (int)target.InstanceId.NumericValue, rerender));
 	}
 
 	/// <summary>
@@ -80,6 +83,20 @@ public class LikeTrackableEventHandler : DefaultTrackableEventHandler
 	public void OnVuMarkLost(VuMarkTarget target)
 	{
 		Debug.Log("Lost VuMark: " + GetVuMarkId(target));
+	}
+
+	public void OnLike()
+	{
+		if (httpCoroutine2 != null) StopCoroutine(httpCoroutine2);
+		gameObject.SetActive(true);
+		httpCoroutine2 = StartCoroutine(FetchFromBackend("POST", "http://localhost:8000/api/stickers/" + (int)currentTarget.InstanceId.NumericValue + "/like/", rerender));
+	}
+
+	public void OnUnlike()
+	{
+		if (httpCoroutine3 != null) StopCoroutine(httpCoroutine3);
+		gameObject.SetActive(true);
+		httpCoroutine3 = StartCoroutine(FetchFromBackend("POST", "http://localhost:8000/api/stickers/" + (int)currentTarget.InstanceId.NumericValue + "/dislike/", rerender));
 	}
 
 	#endregion // PUBLIC_METHODS
@@ -98,40 +115,48 @@ public class LikeTrackableEventHandler : DefaultTrackableEventHandler
 		return string.Empty;
 	}
 
-	private IEnumerator FetchFromBackend(int id)
+	private void rerender(string data) {
+		StickerSummaryResponse resp = JsonUtility.FromJson<StickerSummaryResponse>(data);
+
+		GameObject titleObject = GameObject.FindGameObjectWithTag("Title");
+		titleObject.GetComponent<UnityEngine.UI.Text>().text = resp.data.target.title;
+
+		GameObject descriptionObject = GameObject.FindGameObjectWithTag("Description");
+		descriptionObject.GetComponent<UnityEngine.UI.Text>().text = resp.data.target.description;
+
+		if (resp.data.is_liked == true)
+		{
+			likeButton.SetActive(false);
+			notLikedButton.SetActive(true);
+		}
+		else
+		{
+			likeButton.SetActive(true);
+			notLikedButton.SetActive(false);
+		}
+		Canvas.ForceUpdateCanvases();
+	}
+
+	private IEnumerator FetchFromBackend(string method, string url, System.Action<string> callback)
 	{
-		UnityWebRequest www = UnityWebRequest.Get("https://likeplus.ntusu.org/api/stickers/" + id);
+		UnityWebRequest www;
+		if (method == "GET") {
+			www = UnityWebRequest.Get(url);
+		} else {
+			www = UnityWebRequest.Post(url, "{}");
+		}
+
 		yield return www.SendWebRequest();
 
 		if (www.isNetworkError || www.isHttpError)
 		{
-			Debug.Log("https://likeplus.ntusu.org/api/stickers/" + id);
+			Debug.Log(url);
+			Debug.Log(www.downloadHandler.text);
 			Debug.Log(www.error);
 		}
 		else
 		{
-			// Hide loader
-			//loader.SetActive(false);
-
-			// Show results as text
-			StickerSummaryResponse resp = JsonUtility.FromJson<StickerSummaryResponse>(www.downloadHandler.text);
-
-			GameObject titleObject = GameObject.FindGameObjectWithTag("Title");
-			titleObject.GetComponent<UnityEngine.UI.Text>().text = resp.data.target.title;
-
-			GameObject descriptionObject = GameObject.FindGameObjectWithTag("Description");
-			descriptionObject.GetComponent<UnityEngine.UI.Text>().text = resp.data.target.description;
-
-			if (resp.data.is_liked) {
-				likeButton.SetActive(true);
-				notLikedButton.SetActive(false);
-			} else {
-				likeButton.SetActive(false);
-				notLikedButton.SetActive(true);
-			}
-
-			// Or retrieve results as binary data
-			byte[] results = www.downloadHandler.data;
+			callback(www.downloadHandler.text);
 		}
 	}
 }
