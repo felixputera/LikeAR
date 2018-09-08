@@ -1368,6 +1368,7 @@ GameObject:
   - component: {fileID: 980815597}
   - component: {fileID: 980815599}
   - component: {fileID: 980815598}
+  - component: {fileID: 980815600}
   m_Layer: 0
   m_Name: Image
   m_TagString: Untagged
@@ -1427,6 +1428,17 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 980815596}
   m_CullTransparentMesh: 0
+--- !u!114 &980815600
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 980815596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9e3cad7ee91545118f483d393c4c771, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1405536973
 GameObject:
   m_ObjectHideFlags: 0
