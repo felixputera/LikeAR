@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 114358932093015072}
   - component: {fileID: 23120330385343256}
   m_Layer: 0
-  m_Name: DescriptionPanel 1
+  m_Name: DescriptionPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
