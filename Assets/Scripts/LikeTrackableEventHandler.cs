@@ -31,7 +31,7 @@ public class LikeTrackableEventHandler : DefaultTrackableEventHandler {
     /// </summary>
     public void OnVuMarkDetected(VuMarkTarget target)
     {
-        Debug.Log("New VuMark: " + GetVuMarkId(target));
+        Debug.Log("New VuMark: " + target.InstanceId.NumericValue);
     }
 
     /// <summary>
@@ -59,33 +59,24 @@ public class LikeTrackableEventHandler : DefaultTrackableEventHandler {
         return string.Empty;
     }
 
-    //protected new void OnTrackingFound() {
-    //    Debug.Log("FOUND XD");
+    private IEnumerator FetchFromBackend(string id) {
+        UnityWebRequest www = UnityWebRequest.Get("http://www.example.com/" + id);
+        yield return www.SendWebRequest();
 
-    //}
+        if (www.isNetworkError || www.isHttpError)
+        {
+            Debug.Log(www.error);
+        }
+        else
+        {
+            // Hide loader
+            loader.SetActive(false);
 
-    //protected new void OnTrackingLost() {
+            // Show results as text
+            Debug.Log(www.downloadHandler.text);
 
-    //}
-
-    //private IEnumerator FetchFromBackend(string id) {
-    //    UnityWebRequest www = UnityWebRequest.Get("http://www.example.com/" + id);
-    //    yield return www.SendWebRequest();
-
-    //    if (www.isNetworkError || www.isHttpError)
-    //    {
-    //        Debug.Log(www.error);
-    //    }
-    //    else
-    //    {
-    //        // Hide loader
-    //        loader.SetActive(false);
-
-    //        // Show results as text
-    //        Debug.Log(www.downloadHandler.text);
-
-    //        // Or retrieve results as binary data
-    //        byte[] results = www.downloadHandler.data;
-    //    }
-    //}
+            // Or retrieve results as binary data
+            byte[] results = www.downloadHandler.data;
+        }
+    }
 }
