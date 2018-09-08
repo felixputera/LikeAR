@@ -8,6 +8,8 @@ TagManager:
   - Description
   - NotLikedButton
   - LikeButton
+  - Pipe
+  - FlappyBird
   layers:
   - Default
   - TransparentFX
