@@ -80,6 +80,7 @@ public class FacebookInit : MonoBehaviour
 		}
 		else
 		{
+            Application.Quit();
 			Debug.Log("User cancelled login");
 		}
 	}
